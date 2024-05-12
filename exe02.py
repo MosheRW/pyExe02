@@ -45,12 +45,8 @@ print(txt[x1])
 
 txt1 = txt.split()
 print(txt1)
+
 for i in range(len(txt1)):
     print(txt1[i])
     print("\n")
-#print(table)
-
-"""
-for i in range(len(section)):
-    print(section[i],"\n")
-"""
+    
