@@ -9,35 +9,37 @@ web = requests.get(URL)
 print(web.status_code)
 soup = BeautifulSoup(web.content)
 
-table = soup.find_all('img')
 
-for i in range(len(table)): #need to heandle erorr cases
-    section = table[i]
+def scrap_pics_from_wiki(soup):
 
-    txt = str(section)
-    x = txt.find("src=")
+    table = soup.find_all('img')
 
-    txt = txt.split()
+    for i in range(len(table)): #need to heandle erorr cases
+        section = table[i]
 
-    tablet = list()
+        txt = str(section)
+        x = txt.find("src=")
+
+        txt = txt.split()
+
+        tablet = list()
 
     
-    for x in range(len(txt)):    
-        if txt[x].count('//upload') != 0:
-            tablet.append(txt[x])       
+        for x in range(len(txt)):
+            if txt[x].count('//upload') != 0:
+                tablet.append(txt[x])       
     
-       
+        for x in range(len(tablet)):
+            tale = tablet[x].partition('//')
+            tale = tale[tale.index('//')+1]
 
+            tablet[x] = head + tale
+            tablet[x] = tablet[x].rstrip('"')
+            print(tablet[x])
 
-    for i in range(len(tablet)):    
-        tale = tablet[i].partition('//')[2]
-        tablet[i] = head + tale
-        tablet[i] = tablet[i].rstrip('"')
-        print(tablet[i])
-
-        img_name = str(i) + '.jpg'
-        img_data = requests.get(tablet[i]).content
-        with open(img_name, 'wb') as handler:
-            handler.write(img_data)
+            img_name = str(i) + '_' + str(x) + '.jpg'
+            img_data = requests.get(tablet[x]).content
+            with open(img_name, 'wb') as handler:
+                handler.write(img_data)
             
     
