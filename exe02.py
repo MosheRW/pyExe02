@@ -12,7 +12,7 @@ soup = BeautifulSoup(web.content)
 table = soup.find_all('img')
 
 for i in range(len(table)): #need to heandle erorr cases
-    section = table[47]
+    section = table[i]
 
     txt = str(section)
     x = txt.find("src=")
@@ -39,3 +39,5 @@ for i in range(len(table)): #need to heandle erorr cases
         img_data = requests.get(tablet[i]).content
         with open(img_name, 'wb') as handler:
             handler.write(img_data)
+            
+    
