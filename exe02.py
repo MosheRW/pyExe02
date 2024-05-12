@@ -46,7 +46,33 @@ print(txt[x1])
 txt1 = txt.split()
 print(txt1)
 
+tablet = list()
 for i in range(len(txt1)):
+    print(f"i: {i}: \n")
     print(txt1[i])
     print("\n")
+  
+print(txt1.count('//upload'))
+for i in range(len(txt1)):    
+    if txt1[i].count('//upload') != 0:
+ #   if txt1[i].find('//upload'):
+        tablet.append(txt1[i])       
+        print(f"i: {i}: true")
+    else:
+        print(f"i: {i}: false")
     
+for i in range(len(tablet)):    
+        print(f"i: {i}: {tablet[i]}")
+        
+head = 'https://'
+
+for i in range(len(tablet)):    
+    tale = tablet[i].partition('//')[2]
+    tablet[i] = head + tale
+    tablet[i] = tablet[i].rstrip('"')
+    print(tablet[i])
+
+    img_name = str(i) + '.jpg'
+    img_data = requests.get(tablet[i]).content
+    with open(img_name, 'wb') as handler:
+        handler.write(img_data)
