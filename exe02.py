@@ -15,7 +15,7 @@ def strip_slash(txt):
     
 def strip_dots(txt):
     if txt.count('.') > 1:
-         return strip_dots(txt[txt.find('.')+1:])
+         return txt[txt.find('.')+1:]
     
     return txt
     
@@ -86,8 +86,7 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
         if count_pics >= max_pics:
             break;
 
-
-                
+               
 #--------------         links scraping functions        -------------------
 def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     
@@ -129,9 +128,24 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     #print(links)
     return links
 
+#--------------         get the web page name           -------------------
+def get_the_page_name(web):
+  
+    soup = BeautifulSoup(web.text, 'html.parser')
+
+    table = soup.find_all('span', attrs={'class':'mw-page-title-main'})
+     
+    txt = str(table[0])
+    
+    #txt = txt[txt.find('>')+1:txt.rfind('<')]
+    return  txt[txt.find('>')+1:txt.rfind('<')]
+    
+    
+    
+    
+    
 ###########################################################
-
-
+    
 ###main
 
 head = 'https://'
@@ -142,7 +156,6 @@ web = requests.get(URL)
 print(web.status_code)
 
 
-pics_scraper(web)
-
+print(get_the_page_name(web))
 
     
