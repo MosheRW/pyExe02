@@ -54,7 +54,7 @@ def pic_name(tale):
     3. tablet: contains a set of images (usually from a single class, usually number of sizes of the same picture)
 """
 def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
-    
+    head = 'https://'
     count_pics = 0
     
     soup = BeautifulSoup(web.content,features="html.parser")
