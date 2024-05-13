@@ -1,3 +1,4 @@
+from itertools import count
 import requests
 from bs4 import BeautifulSoup
 import bs4
@@ -154,7 +155,7 @@ def folder_heandler(txt, status = "start"):
     
     
 
-def WebCrawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
+def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
     
     web = requests.get(url)
     print(web.status_code)
@@ -164,11 +165,26 @@ def WebCrawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%
          
     name = get_the_page_name(web)
     
-    folder_path = folder_heandler(name)
+    folder_path = folder_heandler(name, "start")
 
     pics_scraper(web,max_pics)
     
-
+    links_list = links_scraper(web,num_of_pages)
+    
+    page_counter = 0
+    i = 0
+    while page_counter < num_of_pages and i < len(links_list):
+        
+        if not web_crawler(links_list[i],num_of_pages,max_pics,num_of_pages-1):                  #if web_crawler not succeeded
+            i += 1
+            continue
+        else:
+            page_counter += 1
+            
+    folder_path = folder_heandler(folder_path, "end")
+            
+            
+            
  
     
 
@@ -185,5 +201,5 @@ web = requests.get(URL)
 print(web.status_code)
 """
 
-WebCrawler(URL,5,15,2)
+web_crawler(URL,5,15,2)
 
