@@ -136,16 +136,8 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
             if tablet[x].count('wiki') >= 1 and tablet[x].count('href') == 0 and not is_home_page(str(tablet[x])):
                 links.append(tablet[x])                     #adding the link to the final list
                 counter = counter + 1   
-                """ 
-            if tale.count('/w') != 0:
-                tale = tale[tale.index('/w')+1]
-        
-                tablet[x] = head + tale                     #rebuild the link
-                tablet[x] = tablet[x].rstrip('"')           #cleaning it again
-                links.append(tablet[x])                     #adding the link to the final list
-                counter = counter + 1
-                """     
-        if counter >= max_childes * 5: break
+          
+        if counter >= max_childes * 2: break
     
        
 
@@ -236,18 +228,36 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     
 ###main
 
-head = 'https://'
-
-
 #URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
 #URL = 'https://he.wikipedia.org/wiki/%D7%95%D7%99%D7%A0%D7%A1%D7%A0%D7%98_%D7%95%D7%90%D7%9F_%D7%92%D7%95%D7%9A'
-URL = 'https://he.wikipedia.org/wiki/%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%A0%D7%AA%D7%A0%D7%99%D7%94%D7%95'
+#URL = 'https://he.wikipedia.org/wiki/%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%A0%D7%AA%D7%A0%D7%99%D7%94%D7%95'
 
 
 
 
-web_crawler(URL,2,3,5)
+#web_crawler(URL,2,3,5)
 
+def user_input():
+    url = input("copy and past a hebrew wikiPedia link: ")
+    
+    num_of_pages = int(input("insert the number of pages to scrap from any page: "))
+    while num_of_pages < 1:
+	    num_of_pages = int(input("The insertsd value does not match. try again: ")) 
+        
+    num_of_picts = int(input("insert the number of pages to scrap from any page: "))
+    while not 1 <= num_of_picts <= 30 :
+	    num_of_picts = int(input("The insertsd value does not match. try again: ")) 
+        
+    num_of_jumps = int(input("insert the number of jumps: "))
+    while not 1 <= num_of_jumps <= 10 :
+	    num_of_jumps = int(input("The insertsd value does not match. try again: ")) 
+    
+    web_crawler(url,num_of_pages,num_of_picts,num_of_jumps)
+
+
+
+user_input()
+        
 """
 folder = os.getcwd()
 print(folder)
