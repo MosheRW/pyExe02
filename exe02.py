@@ -82,7 +82,7 @@ def scrap_pics_from_wiki(soup): #need to make a special directory
                 handler.write(img_data)
 
 
-
+###main
 
 head = 'https://'
 
