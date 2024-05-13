@@ -2,8 +2,41 @@ import requests
 from bs4 import BeautifulSoup
 import bs4
 
+def pics_scraper(web): #need to make a special directory
+    
+    soup = BeautifulSoup(web.content)
 
-def links_scraper(web):#need to change to liks
+    table = soup.find_all('img')
+
+    for i in range(len(table)):
+        section = table[i]
+
+        txt = str(section)
+        x = txt.find("src=")
+
+        txt = txt.split()
+
+        tablet = list()
+
+    
+        for x in range(len(txt)):
+            if txt[x].count('//upload') != 0:
+                tablet.append(txt[x])       
+    
+        for x in range(len(tablet)):
+            tale = tablet[x].partition('//')
+            tale = tale[tale.index('//')+1]
+
+            tablet[x] = head + tale
+            tablet[x] = tablet[x].rstrip('"')
+            print(tablet[x])
+
+            img_name = str(i) + '_' + str(x) + '.jpg'
+            img_data = requests.get(tablet[x]).content
+            with open(img_name, 'wb') as handler:
+                handler.write(img_data)
+
+def links_scraper(web):                                #links scraper
     
     head = 'https://he.wikipedia.org/w'
 
@@ -40,42 +73,10 @@ def links_scraper(web):#need to change to liks
            
        
 
-    print(links)
+    #print(links)
+    return links
 
 ###########################################################
-def pics_scraper(soup): #need to make a special directory
-    
-    soup = BeautifulSoup(web.content)
-
-    table = soup.find_all('img')
-
-    for i in range(len(table)):
-        section = table[i]
-
-        txt = str(section)
-        x = txt.find("src=")
-
-        txt = txt.split()
-
-        tablet = list()
-
-    
-        for x in range(len(txt)):
-            if txt[x].count('//upload') != 0:
-                tablet.append(txt[x])       
-    
-        for x in range(len(tablet)):
-            tale = tablet[x].partition('//')
-            tale = tale[tale.index('//')+1]
-
-            tablet[x] = head + tale
-            tablet[x] = tablet[x].rstrip('"')
-            print(tablet[x])
-
-            img_name = str(i) + '_' + str(x) + '.jpg'
-            img_data = requests.get(tablet[x]).content
-            with open(img_name, 'wb') as handler:
-                handler.write(img_data)
 
 
 ###main
@@ -87,7 +88,7 @@ web = requests.get(URL)
 print(web.status_code)
 
 
-scrap_links_from_wiki(web)
+
 
             
     
