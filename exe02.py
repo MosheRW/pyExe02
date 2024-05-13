@@ -2,24 +2,21 @@ import requests
 from bs4 import BeautifulSoup
 import bs4
 
-def pics_scraper(web): #need to make a special directory
+def pics_scraper(web):                                  #pics scraper
     
     soup = BeautifulSoup(web.content)
 
     table = soup.find_all('img')
 
     for i in range(len(table)):
-        section = table[i]
-
-        txt = str(section)
-        x = txt.find("src=")
-
+    
+        txt = str(table[i])
         txt = txt.split()
 
-        tablet = list()
+        tablet = list()                                 #creat a list
 
     
-        for x in range(len(txt)):
+        for x in range(len(txt)):                       #Puts the drity pics links in the temp tablet list
             if txt[x].count('//upload') != 0:
                 tablet.append(txt[x])       
     
@@ -27,16 +24,18 @@ def pics_scraper(web): #need to make a special directory
             tale = tablet[x].partition('//')
             tale = tale[tale.index('//')+1]
 
-            tablet[x] = head + tale
+            tablet[x] = head + tale                    #
             tablet[x] = tablet[x].rstrip('"')
             print(tablet[x])
 
-            img_name = str(i) + '_' + str(x) + '.jpg'
+            img_name = str(i) + '_' + str(x) + '.jpg'  
             img_data = requests.get(tablet[x]).content
             with open(img_name, 'wb') as handler:
                 handler.write(img_data)
 
-def links_scraper(web):                                #links scraper
+
+#################
+def links_scraper(web):                                 #links scraper
     
     head = 'https://he.wikipedia.org/w'
 
@@ -55,7 +54,7 @@ def links_scraper(web):                                #links scraper
     
     
         for x in range(len(txt)):
-            if txt[x].count("href=") != 0:              #Puts in the links (dirty)
+            if txt[x].count("href=") != 0:              #Puts the drity links in the temp tablet list
                 tablet.append(txt[x])       
     
      
@@ -88,7 +87,7 @@ web = requests.get(URL)
 print(web.status_code)
 
 
-
+pics_scraper(web)
 
             
     
