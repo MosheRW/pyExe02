@@ -4,6 +4,14 @@ from bs4 import BeautifulSoup
 import bs4
 import os
 
+def is_home_page(url):
+    web = requests.get(url)
+    #if web.status_code == True:
+    if web.ok == True:
+        return   get_the_page_name(web) == 'עמוד ראשי' 
+    else:
+        return False
+ 
 
 #--------------         picture naming functions            -------------------
 def strip_slash(txt):
@@ -96,7 +104,7 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     
     counter = 0
     
-    head = 'https://he.wikipedia.org/w'
+    head = 'https://he.wikipedia.org'
 
     soup = BeautifulSoup(web.text, 'html.parser')
 
@@ -113,18 +121,19 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     
     
         for x in range(len(txt)):
-            if txt[x].count("href=") != 0 and txt[x].count("mw-redirect") == 0 and txt[x].count("index") == 0 and txt[x].count("עמוד ראשי") == 0 and txt[x].count("פורטל") == 0 and txt[x].count("mp3") == 0:                  #Puts the drity links in the temp tablet list
+            if txt[x].count("href=") != 0 and txt[x].count("mw-redirect") == 0 and txt[x].count("index") == 0 and txt[x].count("עמוד ראשי") == 0 and txt[x].count("פורטל") == 0 and txt[x].count(":") == 0 and txt[x].count("mp3") == 0:                  #Puts the drity links in the temp tablet list
                 tablet.append(txt[x])       
     
      
-          
+        
         for x in range(len(tablet)):                        #cleaning the link
             
-            tablet[x].replace('href=',head)
-            tablet[x].replace('"','')
+            tablet[x] = tablet[x].replace('href=',head)
+            tablet[x] = tablet[x].replace('"','')
+            print(tablet[x])
           #  tale = tablet[x].partition('/w')
            
-            if tablet[x].count('wiki') == 1 and tablet[x].count('href') == 0:
+            if tablet[x].count('wiki') >= 1 and tablet[x].count('href') == 0 and not is_home_page(str(tablet[x])):
                 links.append(tablet[x])                     #adding the link to the final list
                 counter = counter + 1   
                 """ 
@@ -136,7 +145,7 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
                 links.append(tablet[x])                     #adding the link to the final list
                 counter = counter + 1
                 """     
-        if counter >= max_childes * 2: break
+        if counter >= max_childes * 5: break
     
        
 
@@ -150,9 +159,11 @@ def get_the_page_name(web):
 
     table = soup.find_all('span', attrs={'class':'mw-page-title-main'})
     
+    #if len(table) >= 0:
     if len(table) >= 0:
-        txt = str(table[0])
-    else:
+        try:
+            txt = str(table[0])
+        except:
          raise Exception("Sorry, no numbers below zero")
     
     #txt = txt[txt.find('>')+1:txt.rfind('<')]
@@ -181,6 +192,7 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     
     web = requests.get(url)
     print(web.status_code)
+    if not web.ok: return False
     
     try:
         name = get_the_page_name(web)
@@ -196,18 +208,21 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     
     
     links_list = links_scraper(web,num_of_pages)
+    
     count = 0
     
     for link in links_list:
         if count != 0: folder_path = folder_heandler(folder_path, "end")
-        
-        count = count + 1
+       # count = count + 1
         if count > num_of_pages: break   
         print(link)
         if web_crawler(link,num_of_pages,max_pics,num_of_jumps-1):
+            count = count + 1
             folder_path = folder_heandler(folder_path, "end")
         else:
-            return False
+            continue
+            #return web_crawler(link,num_of_pages,max_pics,num_of_jumps-1)
+            
 
             
     folder_path = folder_heandler(folder_path, "end")
@@ -215,9 +230,7 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     return True
             
             
-            
- 
-    
+   
 
 ###########################################################
     
@@ -227,8 +240,8 @@ head = 'https://'
 
 
 #URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
-URL = 'https://he.wikipedia.org/wiki/%D7%95%D7%99%D7%A0%D7%A1%D7%A0%D7%98_%D7%95%D7%90%D7%9F_%D7%92%D7%95%D7%9A'
-#URL = 'https://he.wikipedia.org/wiki/%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%A0%D7%AA%D7%A0%D7%99%D7%94%D7%95'
+#URL = 'https://he.wikipedia.org/wiki/%D7%95%D7%99%D7%A0%D7%A1%D7%A0%D7%98_%D7%95%D7%90%D7%9F_%D7%92%D7%95%D7%9A'
+URL = 'https://he.wikipedia.org/wiki/%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%A0%D7%AA%D7%A0%D7%99%D7%94%D7%95'
 
 
 
