@@ -6,28 +6,37 @@ import bs4
 def strip_slash(txt):
     txt = txt.strip('"')
     
-    return txt.lstrip('/')
-
-    """
     if txt.rfind('/') != -1:
         return txt[txt.rfind('/')+1:]
     else:
         return txt
-    """
+
     
 def strip_dots(txt):
-    if txt.find('/') >= 2:
-        
-
-
-def pic_name(tale): 
+    if txt.count('.') > 1:
+         return strip_dots(txt[txt.find('.')+1:])
+    
+    return txt
+    
+def pic_the_name(tale):
      img_name = tale.partition('px-')
      
      if img_name.count('px-') != 0:
-     #   return img_name[img_name.index('px-')+1]
-        return strip_slash(img_name[img_name.index('px-')+1])
+         return img_name[img_name.index('px-')+1]
      else:
-         return strip_slash(img_name[0])
+         return img_name[0]
+    
+
+
+def pic_name(tale):
+    #return strip_dots(strip_slash(pic_the_name(tale)))         # i prefer the long form' for clarity
+
+    txt = pic_the_name(tale)
+    txt = strip_slash(txt)
+    txt = strip_dots(txt)
+    
+    return txt
+    
 
 """
     there is three data-sets
@@ -62,7 +71,7 @@ def pics_scraper(web):                                  #pics scraper
             tablet[x] = head + tale                    #
             tablet[x] = tablet[x].strip('"')
             
-            if x == len(tablet)-1:
+            if x == len(tablet)-1 and tablet[x].count("svg") == 0:
                 
                #img_name = str(i) + '_' + str(x) + '.jpg'  
                # img_name = tale.partition('px-')
@@ -145,11 +154,12 @@ def links_scraper(web):                                 #links scraper
 head = 'https://'
 
 URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
+
 web = requests.get(URL)
 print(web.status_code)
 
 
 pics_scraper(web)
 
-            
+
     
