@@ -1,4 +1,4 @@
-from itertools import count
+﻿from itertools import count
 import requests
 from bs4 import BeautifulSoup
 import bs4
@@ -113,15 +113,21 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     
     
         for x in range(len(txt)):
-            if txt[x].count("href=") != 0:                  #Puts the drity links in the temp tablet list
+            if txt[x].count("href=") != 0 and txt[x].count("mw-redirect") == 0 and txt[x].count("index") == 0 and txt[x].count("עמוד ראשי") == 0 and txt[x].count("פורטל") == 0 and txt[x].count("mp3") == 0:                  #Puts the drity links in the temp tablet list
                 tablet.append(txt[x])       
     
      
           
         for x in range(len(tablet)):                        #cleaning the link
             
-            tale = tablet[x].partition('/w')
-            
+            tablet[x].replace('href=',head)
+            tablet[x].replace('"','')
+          #  tale = tablet[x].partition('/w')
+           
+            if tablet[x].count('wiki') == 1 and tablet[x].count('href') == 0:
+                links.append(tablet[x])                     #adding the link to the final list
+                counter = counter + 1   
+                """ 
             if tale.count('/w') != 0:
                 tale = tale[tale.index('/w')+1]
         
@@ -129,7 +135,7 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
                 tablet[x] = tablet[x].rstrip('"')           #cleaning it again
                 links.append(tablet[x])                     #adding the link to the final list
                 counter = counter + 1
-                
+                """     
         if counter >= max_childes * 2: break
     
        
@@ -143,15 +149,18 @@ def get_the_page_name(web):
     soup = BeautifulSoup(web.text, 'html.parser')
 
     table = soup.find_all('span', attrs={'class':'mw-page-title-main'})
-     
-    txt = str(table[0])
+    
+    if len(table) >= 0:
+        txt = str(table[0])
+    else:
+         raise Exception("Sorry, no numbers below zero")
     
     #txt = txt[txt.find('>')+1:txt.rfind('<')]
-    return  txt[txt.find('>')+1:txt.rfind('<')]
+    return  txt[txt.find('>')+1:txt.rfind('<')].replace('"','')
     
 def folder_heandler(txt, status = "start"):
     prev = os.getcwd()
-    
+ 
     if status == "start" and not os.path.exists(txt):
         os.mkdir(txt)
         os.chdir(txt)
@@ -165,13 +174,19 @@ def folder_heandler(txt, status = "start"):
 
 def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
     
+    print(url)
+
     if num_of_jumps == 0:
         return True
     
     web = requests.get(url)
     print(web.status_code)
-  
-    name = get_the_page_name(web)
+    
+    try:
+        name = get_the_page_name(web)
+    except:
+        return False
+    
     print(name)
     
     folder_path = folder_heandler(name, "start")
@@ -187,7 +202,8 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
         if count != 0: folder_path = folder_heandler(folder_path, "end")
         
         count = count + 1
-        if count > num_of_pages: break    
+        if count > num_of_pages: break   
+        print(link)
         if web_crawler(link,num_of_pages,max_pics,num_of_jumps-1):
             folder_path = folder_heandler(folder_path, "end")
         else:
@@ -210,7 +226,12 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
 head = 'https://'
 
 
-URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
+#URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
+URL = 'https://he.wikipedia.org/wiki/%D7%95%D7%99%D7%A0%D7%A1%D7%A0%D7%98_%D7%95%D7%90%D7%9F_%D7%92%D7%95%D7%9A'
+#URL = 'https://he.wikipedia.org/wiki/%D7%91%D7%A0%D7%99%D7%9E%D7%99%D7%9F_%D7%A0%D7%AA%D7%A0%D7%99%D7%94%D7%95'
+
+
+
 
 web_crawler(URL,2,3,5)
 
