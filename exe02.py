@@ -4,11 +4,20 @@ import bs4
 
 
 def strip_slash(txt):
+    txt = txt.strip('"')
+    
+    return txt.lstrip('/')
+
+    """
     if txt.rfind('/') != -1:
-        return txt[txt.rfind('/'):]
+        return txt[txt.rfind('/')+1:]
     else:
         return txt
-            
+    """
+    
+def strip_dots(txt):
+    if txt.find('/') >= 2:
+        
 
 
 def pic_name(tale): 
@@ -51,7 +60,7 @@ def pics_scraper(web):                                  #pics scraper
             tale = tale[tale.index('//')+1]
 
             tablet[x] = head + tale                    #
-            tablet[x] = tablet[x].rstrip('"')
+            tablet[x] = tablet[x].strip('"')
             
             if x == len(tablet)-1:
                 
