@@ -1,10 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import bs4
+import os
 
 
-
-#--------------         picture naming functions        -------------------
+#--------------         picture naming functions            -------------------
 def strip_slash(txt):
     txt = txt.strip('"')
     
@@ -36,7 +36,7 @@ def pic_name(tale):
     
     return txt
     
-#--------------         picture scraping functions        -------------------
+#--------------         picture scraping function           -------------------
 """
     there is three data-sets
     1. imgTable: contains all implementations of images 
@@ -87,7 +87,7 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
             break;
 
                
-#--------------         links scraping functions        -------------------
+#--------------         links scraping function             -------------------
 def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     
     head = 'https://he.wikipedia.org/w'
@@ -128,7 +128,7 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
     #print(links)
     return links
 
-#--------------         get the web page name           -------------------
+#--------------         get the web page name               -------------------
 def get_the_page_name(web):
   
     soup = BeautifulSoup(web.text, 'html.parser')
@@ -140,22 +140,50 @@ def get_the_page_name(web):
     #txt = txt[txt.find('>')+1:txt.rfind('<')]
     return  txt[txt.find('>')+1:txt.rfind('<')]
     
+def folder_heandler(txt, status = "start"):
+    prev = os.getcwd()
+    
+    if status == "start":
+        os.mkdir(txt)
+        os.chdir(txt)
+        return prev
+    
+    else:
+         os.chdir(txt)     
+         return prev
     
     
+
+def WebCrawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
     
+    web = requests.get(url)
+    print(web.status_code)
     
+    if web.status_code != 200:
+        return False
+         
+    name = get_the_page_name(web)
+    
+    folder_path = folder_heandler(name)
+
+    pics_scraper(web,max_pics)
+    
+
+ 
+    
+
 ###########################################################
     
 ###main
 
 head = 'https://'
 
-URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
 
+URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
+"""
 web = requests.get(URL)
 print(web.status_code)
+"""
 
+WebCrawler(URL,5,15,2)
 
-print(get_the_page_name(web))
-
-    
