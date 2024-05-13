@@ -35,6 +35,7 @@ def pic_name(tale):
     txt = strip_slash(txt)
     txt = strip_dots(txt)
     
+    print(txt)
     return txt
     
 #--------------         picture scraping function           -------------------
@@ -48,7 +49,7 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
     
     count_pics = 0
     
-    soup = BeautifulSoup(web.content)
+    soup = BeautifulSoup(web.content,features="html.parser")
 
     imgTable = soup.find_all('img')
 
@@ -64,7 +65,7 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
             if txt[x].count('//upload') != 0:
                 tablet.append(txt[x])       
             
-        print(tablet)
+        #print(tablet)
             
         for x in range(len(tablet)):
             tale = tablet[x].partition('//')
@@ -81,15 +82,19 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
                     
                 count_pics += 1
                 
-            if count_pics >= max_pics:
+            #if count_pics >= max_pics:
+            if len(next(os.walk(os.getcwd()))[2]) >= max_pics:
                 break;
-
-        if count_pics >= max_pics:
+        
+        #if count_pics >= max_pics:
+        if len(next(os.walk(os.getcwd()))[2]) >= max_pics:
             break;
 
                
 #--------------         links scraping function             -------------------
 def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
+    
+    counter = 0
     
     head = 'https://he.wikipedia.org/w'
 
@@ -123,7 +128,10 @@ def links_scraper(web, max_childes = 5, file_name = None):  #links scraper
                 tablet[x] = head + tale                     #rebuild the link
                 tablet[x] = tablet[x].rstrip('"')           #cleaning it again
                 links.append(tablet[x])                     #adding the link to the final list
-           
+                counter = counter + 1
+                
+        if counter >= max_childes * 2: break
+    
        
 
     #print(links)
@@ -144,7 +152,7 @@ def get_the_page_name(web):
 def folder_heandler(txt, status = "start"):
     prev = os.getcwd()
     
-    if status == "start":
+    if status == "start" and not os.path.exists(txt):
         os.mkdir(txt)
         os.chdir(txt)
         return prev
@@ -157,31 +165,38 @@ def folder_heandler(txt, status = "start"):
 
 def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
     
+    if num_of_jumps == 0:
+        return True
+    
     web = requests.get(url)
     print(web.status_code)
-    
-    if web.status_code != 200:
-        return False
-         
+  
     name = get_the_page_name(web)
+    print(name)
     
     folder_path = folder_heandler(name, "start")
 
     pics_scraper(web,max_pics)
     
-    links_list = links_scraper(web,num_of_pages)
     
-    page_counter = 0
-    i = 0
-    while page_counter < num_of_pages and i < len(links_list):
+    
+    links_list = links_scraper(web,num_of_pages)
+    count = 0
+    
+    for link in links_list:
+        if count != 0: folder_path = folder_heandler(folder_path, "end")
         
-        if not web_crawler(links_list[i],num_of_pages,max_pics,num_of_pages-1):                  #if web_crawler not succeeded
-            i += 1
-            continue
+        count = count + 1
+        if count > num_of_pages: break    
+        if web_crawler(link,num_of_pages,max_pics,num_of_jumps-1):
+            folder_path = folder_heandler(folder_path, "end")
         else:
-            page_counter += 1
+            return False
+
             
     folder_path = folder_heandler(folder_path, "end")
+    
+    return True
             
             
             
@@ -196,10 +211,15 @@ head = 'https://'
 
 
 URL = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C'
-"""
-web = requests.get(URL)
-print(web.status_code)
-"""
 
-web_crawler(URL,5,15,2)
+web_crawler(URL,2,3,5)
 
+"""
+folder = os.getcwd()
+print(folder)
+lst = os.listdir(folder) # your directory path
+number_files = len(lst)
+print(number_files)
+onlyfiles = next(os.walk(folder))[2] #directory is your directory path as string
+print(len(onlyfiles))
+"""
