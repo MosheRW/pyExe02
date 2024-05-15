@@ -25,7 +25,7 @@ def strip_slash(txt):
     
 def strip_dots(txt):
     if txt.count('.') > 1:
-         return txt[txt.find('.')+1:]
+         return strip_dots(txt[txt.find('.')+1:])
     
     return txt
     
@@ -275,7 +275,7 @@ def user_input():
 
 
 creat_father_directory()
-#user_input()
+user_input()
         
 """
 folder = os.getcwd()
