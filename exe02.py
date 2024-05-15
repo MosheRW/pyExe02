@@ -3,6 +3,7 @@ import requests
 from bs4 import BeautifulSoup
 import bs4
 import os
+from datetime import datetime
 
 def is_home_page(url):
     web = requests.get(url)
@@ -82,7 +83,7 @@ def pics_scraper(web, max_pics = 25, file_name = None):  #pics scraper
             tablet[x] = head + tale                    #
             tablet[x] = tablet[x].strip('"')
             
-            if x == len(tablet)-1 and tablet[x].count("svg") == 0:
+            if x == len(tablet)-1 and tablet[x].count("svg") == 0:  
                 #img_name = pic_name(tale)            
                 img_data = requests.get(tablet[x]).content
                 with open(pic_name(tale), 'wb') as handler:
@@ -173,8 +174,6 @@ def folder_heandler(txt, status = "start"):
          os.chdir(txt)     
          return prev
     
-    
-
 def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7%9C', num_of_pages = 5, max_pics = 25, num_of_jumps = 5):
     
     print(url)
@@ -221,7 +220,24 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     
     return True
             
+ 
+def creat_father_directory(copys = 0, now = datetime.now()):
+    
+    if copys == 0:
+        name = now.strftime("%d_%m_%Y-%H%M%S")
+    else:
+        name = now.strftime("%d_%m_%Y-%H%M%S") + '_0' + str(copys)
             
+    if os.path.exists(name):
+        creat_father_directory(copys + 1,now)
+    else:
+         os.mkdir(name)
+         os.chdir(name)
+        
+            
+   
+    
+
    
 
 ###########################################################
@@ -244,7 +260,7 @@ def user_input():
     while num_of_pages < 1:
 	    num_of_pages = int(input("The insertsd value does not match. try again: ")) 
         
-    num_of_picts = int(input("insert the number of pages to scrap from any page: "))
+    num_of_picts = int(input("insert the number of pics to scrap from any page: "))
     while not 1 <= num_of_picts <= 30 :
 	    num_of_picts = int(input("The insertsd value does not match. try again: ")) 
         
@@ -256,7 +272,8 @@ def user_input():
 
 
 
-user_input()
+creat_father_directory()
+#user_input()
         
 """
 folder = os.getcwd()
