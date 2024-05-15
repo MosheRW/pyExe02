@@ -183,6 +183,7 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     
     web = requests.get(url)
     print(web.status_code)
+    
     if not web.ok: return False
     
     try:
@@ -196,6 +197,7 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
 
     pics_scraper(web,max_pics)
     
+    folder_path = folder_heandler(folder_path, "end")
     
     
     links_list = links_scraper(web,num_of_pages)
@@ -203,20 +205,20 @@ def web_crawler(url = 'https://he.wikipedia.org/wiki/%D7%99%D7%A9%D7%A8%D7%90%D7
     count = 0
     
     for link in links_list:
-        if count != 0: folder_path = folder_heandler(folder_path, "end")
+       # if count != 0: folder_path = folder_heandler(folder_path, "end")
        # count = count + 1
         if count > num_of_pages: break   
         print(link)
         if web_crawler(link,num_of_pages,max_pics,num_of_jumps-1):
             count = count + 1
-            folder_path = folder_heandler(folder_path, "end")
+        #    folder_path = folder_heandler(folder_path, "end")
         else:
             continue
             #return web_crawler(link,num_of_pages,max_pics,num_of_jumps-1)
             
 
             
-    folder_path = folder_heandler(folder_path, "end")
+    #folder_path = folder_heandler(folder_path, "end")
     
     return True
             
